@@ -77,6 +77,7 @@ module ActiveRecord
       VARIANT_TYPE = 'VARIANT'.freeze
       DATE_TYPE = 'DATE'.freeze
       JSON_TYPE = 'JSON'.freeze
+      TIMESTAMP = 'TIMESTAMP'.freeze
 
       ERR_DUPLICATE_KEY_VALUE                     = 23_505
       ERR_QUERY_TIMED_OUT                         = 57_014

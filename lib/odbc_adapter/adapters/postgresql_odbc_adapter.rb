@@ -8,6 +8,7 @@ module ODBCAdapter
       VARIANT_TYPE = 'VARIANT'.freeze
       DATE_TYPE = 'DATE'.freeze
       JSON_TYPE = 'JSON'.freeze
+      TIMESTAMP = 'TIMESTAMP'.freeze
 
       alias create insert
 

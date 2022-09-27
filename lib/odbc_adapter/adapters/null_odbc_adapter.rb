@@ -7,6 +7,7 @@ module ODBCAdapter
       VARIANT_TYPE = 'VARIANT'.freeze
       DATE_TYPE = 'DATE'.freeze
       JSON_TYPE = 'JSON'.freeze
+      TIMESTAMP = 'TIMESTAMP'.freeze
       # Using a BindVisitor so that the SQL string gets substituted before it is
       # sent to the DBMS (to attempt to get as much coverage as possible for
       # DBMSs we don't support).
