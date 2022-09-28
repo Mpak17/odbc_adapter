@@ -8,11 +8,12 @@ module ODBCAdapter
       DATE_TYPE = 'DATE'.freeze
       JSON_TYPE = 'JSON'.freeze
       TIMESTAMP = 'TIMESTAMP'.freeze
+      ARRAY = 'ARRAY'.freeze
       # Using a BindVisitor so that the SQL string gets substituted before it is
       # sent to the DBMS (to attempt to get as much coverage as possible for
       # DBMSs we don't support).
       def arel_visitor
-        ::SnowflakeInsertManager.new(self)
+        ODBCAdapter::Adapters::SnowflakeInsertManager.new(self)
       end
 
       # Explicitly turning off prepared_statements in the null adapter because
@@ -32,23 +33,34 @@ module ODBCAdapter
       private
 
       def visit_Arel_Nodes_ValuesList(o, collector)
-        collector << "VALUES "
-
-        o.rows.each_with_index do |row, i|
-          collector << ", " unless i == 0
-          collector << "("
-          row.each_with_index do |value, k|
-            collector << ", " unless k == 0
-            case value
-            when Nodes::SqlLiteral, Nodes::BindParam
-              collector = visit(value, collector)
-            else
-              collector << quote(value).to_s
+        if o.rows.first.map {|row| row.value.type.class}.include?(ActiveRecord::Type::Json)
+          collector << "SELECT "
+          o.rows.each_with_index do |row, i|
+            collector << ", " unless i == 0
+            row.each_with_index do |value, k|
+              collector << ", " unless k == 0
+              case value
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
+                if value.value.type.is_a?(ActiveRecord::Type::Json)
+                  collector << json_quote(value.value_before_type_cast)
+                else
+                  collector = visit(value, collector)
+                end
+              else
+                collector << quote(value).to_s
+              end
             end
           end
-          collector << ")"
+
+          return collector
         end
-        collector
+
+        super
+      end
+
+      def json_quote(value)
+        string = value.to_s.gsub('"', '\'')
+        value.is_a?(Hash) ? string.gsub('=>', ':') :string
       end
     end
   end

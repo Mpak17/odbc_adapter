@@ -76,7 +76,9 @@ module ODBCAdapter
 
         args = { sql_type: col_sql_type, type: col_sql_type, limit: col_limit }
         args[:sql_type] = 'boolean' if col_native_type == self.class::BOOLEAN_TYPE
-        args[:sql_type] = 'json' if col_native_type == self.class::VARIANT_TYPE || col_native_type == self.class::JSON_TYPE
+        args[:sql_type] = 'json' if col_native_type == self.class::VARIANT_TYPE ||
+                                    col_native_type == self.class::ARRAY ||
+                                    col_native_type == self.class::JSON_TYPE
         args[:sql_type] = 'date' if col_native_type == self.class::DATE_TYPE || col_native_type == self.class::TIMESTAMP
         col_default = nil if col_native_type == self.class::TIMESTAMP
 

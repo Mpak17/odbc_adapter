@@ -78,6 +78,7 @@ module ActiveRecord
       DATE_TYPE = 'DATE'.freeze
       JSON_TYPE = 'JSON'.freeze
       TIMESTAMP = 'TIMESTAMP'.freeze
+      ARRAY = 'ARRAY'.freeze
 
       ERR_DUPLICATE_KEY_VALUE                     = 23_505
       ERR_QUERY_TIMED_OUT                         = 57_014
