@@ -12,7 +12,7 @@ module ODBCAdapter
       # sent to the DBMS (to attempt to get as much coverage as possible for
       # DBMSs we don't support).
       def arel_visitor
-        ::ODBCAdapter::SnowflakeInsertManager.new(self)
+        ::SnowflakeInsertManager.new(self)
       end
 
       # Explicitly turning off prepared_statements in the null adapter because
