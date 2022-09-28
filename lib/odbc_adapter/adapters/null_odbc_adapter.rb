@@ -12,7 +12,7 @@ module ODBCAdapter
       # sent to the DBMS (to attempt to get as much coverage as possible for
       # DBMSs we don't support).
       def arel_visitor
-        Arel::Visitors::PostgreSQL.new(self)
+        ::ODBCAdapter::SnowflakeInsertManager.new(self)
       end
 
       # Explicitly turning off prepared_statements in the null adapter because
@@ -25,6 +25,30 @@ module ODBCAdapter
       # go off of for what syntax the DBMS will expect.
       def supports_migrations?
         false
+      end
+    end
+
+    class SnowflakeInsertManager < Arel::Visitors::ToSql
+      private
+
+      def visit_Arel_Nodes_ValuesList(o, collector)
+        collector << "VALUES "
+
+        o.rows.each_with_index do |row, i|
+          collector << ", " unless i == 0
+          collector << "("
+          row.each_with_index do |value, k|
+            collector << ", " unless k == 0
+            case value
+            when Nodes::SqlLiteral, Nodes::BindParam
+              collector = visit(value, collector)
+            else
+              collector << quote(value).to_s
+            end
+          end
+          collector << ")"
+        end
+        collector
       end
     end
   end
