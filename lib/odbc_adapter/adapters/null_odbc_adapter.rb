@@ -33,15 +33,15 @@ module ODBCAdapter
       private
 
       def visit_Arel_Nodes_ValuesList(o, collector)
-        if o.rows.first.map {|row| row.value.type.class}.include?(ActiveRecord::Type::Json)
+        if o.rows.first.map {|row| row.type.class}.include?(ActiveRecord::Type::Json)
           collector << "SELECT "
           o.rows.each_with_index do |row, i|
             collector << ", " unless i == 0
             row.each_with_index do |value, k|
               collector << ", " unless k == 0
               case value
-              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam
-                if value.value.type.is_a?(ActiveRecord::Type::Json)
+              when Arel::Nodes::SqlLiteral, Arel::Nodes::BindParam, ActiveModel::Attribute
+                if value.type.is_a?(ActiveRecord::Type::Json)
                   collector << json_quote(value.value_before_type_cast)
                 else
                   collector = visit(value, collector)
@@ -59,8 +59,9 @@ module ODBCAdapter
       end
 
       def json_quote(value)
-        string = value.to_s.gsub('"', '\'')
-        value.is_a?(Hash) ? string.gsub('=>', ':') :string
+        string = value.to_s.gsub('nil', "NULL")
+        string = string.gsub('"', '\'')
+        value.is_a?(Hash) ? string.gsub('=>', ':') : string
       end
     end
   end
