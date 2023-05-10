@@ -59,9 +59,7 @@ module ODBCAdapter
       end
 
       def json_quote(value)
-        string = value.to_s.gsub('nil', "NULL")
-        string = string.gsub('"', '\'')
-        value.is_a?(Hash) ? string.gsub('=>', ':') : string
+        value.to_json.gsub('"', '\'')
       end
     end
   end
