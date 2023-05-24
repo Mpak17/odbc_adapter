@@ -29,7 +29,7 @@ module ODBCAdapter
       end
     end
 
-    class SnowflakeInsertManager < Arel::Visitors::ToSql
+    class SnowflakeInsertManager < Arel::Visitors::PostgreSQL
       private
 
       def visit_Arel_Nodes_ValuesList(o, collector)
