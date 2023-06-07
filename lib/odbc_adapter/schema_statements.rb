@@ -64,6 +64,8 @@ module ODBCAdapter
       stmt.drop
 
       result.each_with_object([]) do |col, cols|
+        next if current_schema && col[1] != current_schema
+
         col_name        = col[3]  # SQLColumns: COLUMN_NAME
         col_default     = col[12] # SQLColumns: COLUMN_DEF
         col_sql_type    = col[4]  # SQLColumns: DATA_TYPE

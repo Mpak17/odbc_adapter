@@ -88,11 +88,12 @@ module ActiveRecord
 
       # The object that stores the information that is fetched from the DBMS
       # when a connection is first established.
-      attr_reader :database_metadata
+      attr_reader :database_metadata, :current_schema
 
       def initialize(connection, logger, config, database_metadata)
         configure_time_options(connection)
         super(connection, logger, config)
+        @current_schema = config[:schema]&.upcase # Add to the config for the schema_statements to work correctly
         @database_metadata = database_metadata
       end
 
